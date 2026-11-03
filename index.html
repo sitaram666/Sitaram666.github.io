@@ -3,122 +3,213 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ronish Dada Video Compressor</title>
+<title>Rownees dada Video Optimizer</title>
 <style>
-body { font-family: sans-serif; background-color: #000; color: #fff; text-align: center; padding: 20px; }
-.container { max-width: 500px; margin: 0 auto; border: 1px solid #333; padding: 20px; border-radius: 15px; background-color: #111; }
-.badges { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-.badge { background-color: #222; border: 1px solid #444; color: #4a90e2; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-.upload-section { margin: 20px 0; border: 2px dashed #4a90e2; padding: 30px; border-radius: 10px; cursor: pointer; background-color: #1a1a1a; }
-.btn { background-color: #4a90e2; color: #fff; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; display: inline-block; text-decoration: none; box-sizing: border-box; }
-.hidden { display: none !important; }
-input[type="file"] { display: none; }
+:root {
+--bg-color: #0a0a0c;
+--card-bg: #141416;
+--accent-color: #0066ff;
+--text-color: #ffffff;
+--text-muted: #8e8e93;
+--border-color: #262629;
+--success-color: #30d158;
+}
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+background-color: var(--bg-color);
+color: var(--text-color);
+margin: 0;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+}
+.container {
+width: 100%;
+max-width: 500px;
+background-color: var(--card-bg);
+border: 1px solid var(--border-color);
+border-radius: 24px;
+padding: 40px;
+box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+text-align: center;
+}
+h1 {
+font-size: 28px;
+font-weight: 700;
+margin-bottom: 8px;
+letter-spacing: -0.5px;
+}
+p.subtitle {
+color: var(--text-muted);
+font-size: 15px;
+margin-bottom: 32px;
+}
+.upload-area {
+position: relative;
+border: 2px dashed var(--border-color);
+border-radius: 20px;
+padding: 48px 24px;
+transition: all 0.3s ease;
+cursor: pointer;
+background: rgba(255, 255, 255, 0.01);
+}
+.upload-area:hover {
+border-color: var(--accent-color);
+background: rgba(0, 102, 255, 0.05);
+}
+.upload-area svg {
+width: 48px;
+height: 48px;
+fill: var(--accent-color);
+margin-bottom: 16px;
+}
+.upload-area p {
+margin: 0;
+font-size: 16px;
+font-weight: 600;
+}
+.upload-area span {
+display: block;
+color: var(--text-muted);
+font-size: 13px;
+margin-top: 8px;
+}
+input[type="file"] {
+display: none;
+}
+#action-btn {
+background-color: var(--accent-color);
+color: var(--text-color);
+border: none;
+border-radius: 12px;
+padding: 16px 32px;
+font-size: 16px;
+font-weight: 600;
+width: 100%;
+margin-top: 32px;
+cursor: pointer;
+transition: opacity 0.2s ease;
+display: none;
+}
+#action-btn:hover {
+opacity: 0.9;
+}
+#status {
+margin-top: 24px;
+font-size: 14px;
+color: var(--text-muted);
+min-height: 20px;
+}
+#progress-bar {
+width: 100%;
+height: 4px;
+background-color: var(--border-color);
+border-radius: 2px;
+margin-top: 16px;
+overflow: hidden;
+display: none;
+}
+#progress-fill {
+height: 100%;
+background-color: var(--accent-color);
+width: 0%;
+transition: width 0.2s ease;
+}
+#download-link {
+display: block;
+margin-top: 24px;
+color: var(--success-color);
+text-decoration: none;
+font-weight: 600;
+font-size: 15px;
+display: none;
+}
+video {
+width: 100%;
+border-radius: 16px;
+margin-top: 32px;
+display: none;
+}
 </style>
-<!-- Load FFmpeg.wasm v0.12.6 -->
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js"></script>
-<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js"></script>
 </head>
 <body>
 <div class="container">
-<h1>Ronish Dada Video Compressor</h1>
-<!-- Feature Badges -->
-<div class="badges">
-<span class="badge">Single</span>
-<span class="badge">No Encode</span>
-<span class="badge">Zero Quality Loss</span>
-<span class="badge">HDR Video Upload</span>
+<h1>Video Optimizer</h1>
+<p class="subtitle">Maintain quality, optimized for TikTok.</p>
+<div class="upload-area" onclick="document.getElementById('file-input').click()">
+<svg viewBox="0 0 24 24">
+<path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.48 0-2.85.43-4.01 1.17C5.35 4.88 2.5 7.5 2.5 10.5c0 3.39 2.75 6.14 6.14 6.14h10.99c2.97 0 5.39-2.31 5.39-4.8 0-1.89-1.04-3.52-2.69-3.8zM14 13v3h-4v-3H7l5-5 5 5h-3z"/>
+</svg>
+<p>Choose a video file</p>
+<span>or drag and drop it here</span>
 </div>
-<!-- Normal Video Option -->
-<div class="upload-section" id="box-normal">
-<p>Drop your normal video here</p>
-<p>or choose a file</p>
-<button type="button" class="btn" id="btn-normal">Choose normal 4K 120fps video</button>
-<input type="file" id="upload-normal" accept="video/*">
+<input type="file" id="file-input" accept="video/*">
+<div id="progress-bar"><div id="progress-fill"></div></div>
+<div id="status"></div>
+<button id="action-btn" onclick="processVideo()">Optimize Video</button>
+<video id="player" controls></video>
+<a id="download-link" href="#" download>Download Optimized Video</a>
 </div>
-<!-- HDR Video Option -->
-<div class="upload-section" id="box-hdr">
-<p>Drop your HDR video here</p>
-<p>or choose a file</p>
-<button type="button" class="btn" id="btn-hdr">Choose HDR Dolby Vision video</button>
-<input type="file" id="upload-hdr" accept="video/*">
-</div>
-<p id="status"></p>
-<video id="player" controls class="hidden" width="100%"></video>
-
-
-<a id="download-btn" class="btn hidden">Download Compressed Video</a>
-</div>
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.9/dist/ffmpeg.min.js"></script>
 <script>
 const { FFmpeg } = FFmpegWASM;
-const { fetchFile, toBlobURL } = FFmpegUtil;
 let ffmpeg = null;
-// UI triggers without event loop bubbling
-document.getElementById('box-normal').addEventListener('click', (e) => {
-if (e.target.id !== 'upload-normal') document.getElementById('upload-normal').click();
-});
-document.getElementById('box-hdr').addEventListener('click', (e) => {
-if (e.target.id !== 'upload-hdr') document.getElementById('upload-hdr').click();
+let videoFile = null;
+const fileInput = document.getElementById('file-input');
+const uploadArea = document.querySelector('.upload-area');
+const actionBtn = document.getElementById('action-btn');
+const status = document.getElementById('status');
+const progressBar = document.getElementById('progress-bar');
+const progressFill = document.getElementById('progress-fill');
+const player = document.getElementById('player');
+const downloadLink = document.getElementById('download-link');
+fileInput.addEventListener('change', (e) => {
+videoFile = e.target.files[0];
+if (videoFile) {
+status.textContent = ⁠Selected: ${videoFile.name}⁠;
+uploadArea.style.borderColor = var(--success-color);
+actionBtn.style.display = 'block';
+}
 });
 async function initFFmpeg() {
 if (ffmpeg === null) {
 ffmpeg = new FFmpeg();
-ffmpeg.on('log', ({ message }) => {
-console.log(message);
-});
 ffmpeg.on('progress', ({ progress }) => {
-document.getElementById('status').innerText = ⁠Processing: ${Math.round(progress * 100)}%⁠;
+progressBar.style.display = 'block';
+progressFill.style.width = ⁠${Math.round(progress * 100)}%⁠;
+status.textContent = ⁠Processing: ${Math.round(progress * 100)}%⁠;
 });
-const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-await ffmpeg.load({
-coreURL: await toBlobURL(⁠${baseURL}/ffmpeg-core.js⁠, 'text/javascript'),
-wasmURL: await toBlobURL(⁠${baseURL}/ffmpeg-core.wasm⁠, 'application/wasm'),
-});
+await ffmpeg.load();
 }
 }
-async function handleCompression(file) {
-try {
-document.getElementById('status').innerText = "Loading FFmpeg library...";
+async function processVideo() {
 await initFFmpeg();
-document.getElementById('status').innerText = "Processing video...";
-const inputName = 'input_' + Date.now() + '.mp4';
-const outputName = 'compressed_' + Date.now() + '.mp4';
-await ffmpeg.writeFile(inputName, await fetchFile(file));
-// Optimized H.264 profile for TikTok smoothness
+actionBtn.disabled = true;
+status.textContent = "Loading library...";
+const { fetchFile } = FFmpegWASM;
+await ffmpeg.writeFile('input.mp4', await fetchFile(videoFile));
+status.textContent = "Compressing video...";
 await ffmpeg.exec([
-'-i', inputName,
+'-i', 'input.mp4',
 '-c:v', 'libx264',
 '-preset', 'ultrafast',
-'-crf', '20',
-'-r', '60',
-'-pix_fmt', 'yuv420p',
+'-crf', '24',
 '-c:a', 'aac',
 '-b:a', '128k',
-outputName
+'-y', 'output.mp4'
 ]);
-const data = await ffmpeg.readFile(outputName);
+const data = await ffmpeg.readFile('output.mp4');
 const videoBlob = new Blob([data.buffer], { type: 'video/mp4' });
 const videoUrl = URL.createObjectURL(videoBlob);
-const player = document.getElementById('player');
 player.src = videoUrl;
-player.classList.remove('hidden');
-const downloadBtn = document.getElementById('download-btn');
-downloadBtn.href = videoUrl;
-downloadBtn.download = 'compressed_' + file.name;
-downloadBtn.classList.remove('hidden');
-document.getElementById('status').innerText = "Video compressed successfully!";
-} catch (err) {
-console.error(err);
-document.getElementById('status').innerText = "Compression Error: " + err.message;
+player.style.display = 'block';
+downloadLink.href = videoUrl;
+downloadLink.download = ⁠optimized_${videoFile.name}⁠;
+downloadLink.style.display = 'block';
+status.textContent = "Optimization complete!";
+progressBar.style.display = 'none';
 }
-}
-document.getElementById('upload-normal').addEventListener('change', function(e) {
-const file = e.target.files[0];
-if (file) handleCompression(file);
-});
-document.getElementById('upload-hdr').addEventListener('change', function(e) {
-const file = e.target.files[0];
-if (file) handleCompression(file);
-});
 </script>
 </body>
 </html>
