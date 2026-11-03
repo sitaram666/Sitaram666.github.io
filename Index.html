@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Video Compressor</title>
+<style>
+body { font-family: sans-serif; text-align: center; padding: 20px; }
+input { margin: 20px 0; }
+video { max-width: 100%; display: block; margin: 20px auto; }
+</style>
+</head>
+<body>
+<h1>Video Compressor</h1>
+<input type="file" id="upload" accept="video/*">
+<video id="player" controls></video>
+<script>
+document.getElementById('upload').addEventListener('change', function(e) {
+const file = e.target.files[0];
+const url = URL.createObjectURL(file);
+document.getElementById('player').src = url;
+});
+</script>
+</body>
+</html>
