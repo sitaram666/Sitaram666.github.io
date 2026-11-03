@@ -1,215 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rownees dada Video Optimizer</title>
-<style>
-:root {
---bg-color: #0a0a0c;
---card-bg: #141416;
---accent-color: #0066ff;
---text-color: #ffffff;
---text-muted: #8e8e93;
---border-color: #262629;
---success-color: #30d158;
-}
-body {
-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-background-color: var(--bg-color);
-color: var(--text-color);
-margin: 0;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-}
-.container {
-width: 100%;
-max-width: 500px;
-background-color: var(--card-bg);
-border: 1px solid var(--border-color);
-border-radius: 24px;
-padding: 40px;
-box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-text-align: center;
-}
-h1 {
-font-size: 28px;
-font-weight: 700;
-margin-bottom: 8px;
-letter-spacing: -0.5px;
-}
-p.subtitle {
-color: var(--text-muted);
-font-size: 15px;
-margin-bottom: 32px;
-}
-.upload-area {
-position: relative;
-border: 2px dashed var(--border-color);
-border-radius: 20px;
-padding: 48px 24px;
-transition: all 0.3s ease;
-cursor: pointer;
-background: rgba(255, 255, 255, 0.01);
-}
-.upload-area:hover {
-border-color: var(--accent-color);
-background: rgba(0, 102, 255, 0.05);
-}
-.upload-area svg {
-width: 48px;
-height: 48px;
-fill: var(--accent-color);
-margin-bottom: 16px;
-}
-.upload-area p {
-margin: 0;
-font-size: 16px;
-font-weight: 600;
-}
-.upload-area span {
-display: block;
-color: var(--text-muted);
-font-size: 13px;
-margin-top: 8px;
-}
-input[type="file"] {
-display: none;
-}
-#action-btn {
-background-color: var(--accent-color);
-color: var(--text-color);
-border: none;
-border-radius: 12px;
-padding: 16px 32px;
-font-size: 16px;
-font-weight: 600;
-width: 100%;
-margin-top: 32px;
-cursor: pointer;
-transition: opacity 0.2s ease;
-display: none;
-}
-#action-btn:hover {
-opacity: 0.9;
-}
-#status {
-margin-top: 24px;
-font-size: 14px;
-color: var(--text-muted);
-min-height: 20px;
-}
-#progress-bar {
-width: 100%;
-height: 4px;
-background-color: var(--border-color);
-border-radius: 2px;
-margin-top: 16px;
-overflow: hidden;
-display: none;
-}
-#progress-fill {
-height: 100%;
-background-color: var(--accent-color);
-width: 0%;
-transition: width 0.2s ease;
-}
-#download-link {
-display: block;
-margin-top: 24px;
-color: var(--success-color);
-text-decoration: none;
-font-weight: 600;
-font-size: 15px;
-display: none;
-}
-video {
-width: 100%;
-border-radius: 16px;
-margin-top: 32px;
-display: none;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Video Optimizer</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --card-bg: #161b22;
+      --accent: #ff3b5c;
+      --text: #ffffff;
+      --border: #30363d;
+      --success: #238636;
+    }
+    body { font-family: sans-serif; background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+    .container { width: 100%; max-width: 500px; background-color: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 30px; text-align: center; }
+    h1 { font-size: 24px; margin-bottom: 10px; }
+    .subtitle { color: #8b949e; font-size: 14px; margin-bottom: 20px; }
+    .upload-area { border: 2px dashed var(--border); border-radius: 12px; padding: 30px; cursor: pointer; transition: 0.2s; }
+    .upload-area:hover { border-color: var(--accent); }
+    input[type="file"] { display: none; }
+    .video-info { display: none; margin-top: 20px; text-align: left; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; }
+    .info-item { font-size: 14px; margin: 5px 0; }
+    .action-btn { background-color: var(--accent); color: var(--text); border: none; border-radius: 10px; padding: 12px; width: 100%; font-size: 16px; cursor: pointer; margin-top: 20px; display: none; }
+    .action-btn:disabled { opacity: 0.5; }
+    .status { margin-top: 15px; font-size: 14px; }
+    .progress-bar { width: 100%; height: 6px; background-color: var(--border); border-radius: 3px; margin-top: 10px; overflow: hidden; display: none; }
+    .progress-fill { height: 100%; background-color: var(--accent); width: 0%; transition: 0.2s; }
+    video { width: 100%; border-radius: 10px; margin-top: 20px; display: none; }
+    .download-link { display: none; background-color: var(--success); color: var(--text); text-decoration: none; border-radius: 10px; padding: 12px; display: block; margin-top: 15px; font-weight: bold; }
+  </style>
 </head>
 <body>
-<div class="container">
-<h1>Video Optimizer</h1>
-<p class="subtitle">Maintain quality, optimized for TikTok.</p>
-<div class="upload-area" onclick="document.getElementById('file-input').click()">
-<svg viewBox="0 0 24 24">
-<path d="M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.48 0-2.85.43-4.01 1.17C5.35 4.88 2.5 7.5 2.5 10.5c0 3.39 2.75 6.14 6.14 6.14h10.99c2.97 0 5.39-2.31 5.39-4.8 0-1.89-1.04-3.52-2.69-3.8zM14 13v3h-4v-3H7l5-5 5 5h-3z"/>
-</svg>
-<p>Choose a video file</p>
-<span>or drag and drop it here</span>
-</div>
-<input type="file" id="file-input" accept="video/*">
-<div id="progress-bar"><div id="progress-fill"></div></div>
-<div id="status"></div>
-<button id="action-btn" onclick="processVideo()">Optimize Video</button>
-<video id="player" controls></video>
-<a id="download-link" href="#" download>Download Optimized Video</a>
-</div>
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.9/dist/ffmpeg.min.js"></script>
-<script>
-const { FFmpeg } = FFmpegWASM;
-let ffmpeg = null;
-let videoFile = null;
-const fileInput = document.getElementById('file-input');
-const uploadArea = document.querySelector('.upload-area');
-const actionBtn = document.getElementById('action-btn');
-const status = document.getElementById('status');
-const progressBar = document.getElementById('progress-bar');
-const progressFill = document.getElementById('progress-fill');
-const player = document.getElementById('player');
-const downloadLink = document.getElementById('download-link');
-fileInput.addEventListener('change', (e) => {
-videoFile = e.target.files[0];
-if (videoFile) {
-status.textContent = ⁠Selected: ${videoFile.name}⁠;
-uploadArea.style.borderColor = var(--success-color);
-actionBtn.style.display = 'block';
-}
-});
-async function initFFmpeg() {
-if (ffmpeg === null) {
-ffmpeg = new FFmpeg();
-ffmpeg.on('progress', ({ progress }) => {
-progressBar.style.display = 'block';
-progressFill.style.width = ⁠${Math.round(progress * 100)}%⁠;
-status.textContent = ⁠Processing: ${Math.round(progress * 100)}%⁠;
-});
-await ffmpeg.load();
-}
-}
-async function processVideo() {
-await initFFmpeg();
-actionBtn.disabled = true;
-status.textContent = "Loading library...";
-const { fetchFile } = FFmpegWASM;
-await ffmpeg.writeFile('input.mp4', await fetchFile(videoFile));
-status.textContent = "Compressing video...";
-await ffmpeg.exec([
-'-i', 'input.mp4',
-'-c:v', 'libx264',
-'-preset', 'ultrafast',
-'-crf', '24',
-'-c:a', 'aac',
-'-b:a', '128k',
-'-y', 'output.mp4'
-]);
-const data = await ffmpeg.readFile('output.mp4');
-const videoBlob = new Blob([data.buffer], { type: 'video/mp4' });
-const videoUrl = URL.createObjectURL(videoBlob);
-player.src = videoUrl;
-player.style.display = 'block';
-downloadLink.href = videoUrl;
-downloadLink.download = ⁠optimized_${videoFile.name}⁠;
-downloadLink.style.display = 'block';
-status.textContent = "Optimization complete!";
-progressBar.style.display = 'none';
-}
-</script>
+  <div class="container">
+    <h1>Video Optimizer</h1>
+    <div class="subtitle">Maintain quality, optimized for TikTok</div>
+    <div class="upload-area" onclick="document.getElementById('file-input').click()">
+      <p>Choose a video file</p>
+      <span>or drag and drop it here</span>
+    </div>
+    <input type="file" id="file-input" accept="video/*">
+    <div class="video-info" id="video-info">
+      <div class="info-item"><strong>File:</strong> <span id="file-name"></span></div>
+      <div class="info-item"><strong>Size:</strong> <span id="file-size"></span></div>
+      <div class="info-item"><strong>Resolution:</strong> <span id="val-res"></span></div>
+    </div>
+    <button class="action-btn" id="action-btn" onclick="processVideo()">Optimize Video</button>
+    <div class="status" id="status"></div>
+    <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <video id="player" controls></video>
+    <a id="download-link" class="download-link" download="optimized.mp4">Download Optimized Video</a>
+  </div>
+  <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+  <script>
+    let ffmpeg = null;
+    let selectedFile = null;
+    const fileInput = document.getElementById('file-input');
+    const videoInfo = document.getElementById('video-info');
+    const actionBtn = document.getElementById('action-btn');
+    const statusText = document.getElementById('status');
+    const progressBar = document.getElementById('progress-bar');
+    const progressFill = document.getElementById('progress-fill');
+    const player = document.getElementById('player');
+    const downloadLink = document.getElementById('download-link');
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) handleFile(e.target.files[0]);
+    });
+    function handleFile(file) {
+      selectedFile = file;
+      document.getElementById('file-name').textContent = file.name;
+      document.getElementById('file-size').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+      const tempVideo = document.createElement('video');
+      tempVideo.src = URL.createObjectURL(file);
+      tempVideo.onloadedmetadata = () => {
+        document.getElementById('val-res').textContent = `${tempVideo.videoWidth}x${tempVideo.videoHeight}`;
+      };
+      videoInfo.style.display = 'block';
+      actionBtn.style.display = 'block';
+      statusText.textContent = '';
+      player.style.display = 'none';
+      downloadLink.style.display = 'none';
+    }
+    async function initFFmpeg() {
+      if (ffmpeg === null) {
+        const { FFmpeg } = FFmpegWASM;
+        ffmpeg = new FFmpeg();
+        ffmpeg.on('progress', ({ progress }) => {
+          progressBar.style.display = 'block';
+          const percent = Math.round(progress * 100);
+          progressFill.style.width = percent + '%';
+          statusText.textContent = `Processing: ${percent}%`;
+        });
+        statusText.textContent = 'Loading engine...';
+        await ffmpeg.load();
+      }
+    }
+    async function processVideo() {
+      if (!selectedFile) return;
+      actionBtn.disabled = true;
+      try {
+        await initFFmpeg();
+        const { fetchFile } = FFmpegWASM;
+        await ffmpeg.writeFile('input.mp4', await fetchFile(selectedFile));
+        statusText.textContent = 'Optimizing video quality...';
+        await ffmpeg.exec([
+          '-i', 'input.mp4',
+          '-c:v', 'libx264',
+          '-preset', 'ultrafast',
+          '-crf', '24',
+          '-c:a', 'aac',
+          '-b:a', '128k',
+          '-y', 'output.mp4'
+        ]);
+        const data = await ffmpeg.readFile('output.mp4');
+        const videoBlob = new Blob([data.buffer], { type: 'video/mp4' });
+        const videoUrl = URL.createObjectURL(videoBlob);
+        player.src = videoUrl;
+        player.style.display = 'block';
+        downloadLink.href = videoUrl;
+        downloadLink.style.display = 'block';
+        statusText.textContent = 'Optimization complete!';
+        progressBar.style.display = 'none';
+      } catch (err) {
+        statusText.textContent = 'Error: ' + err.message;
+      } finally {
+        actionBtn.disabled = false;
+      }
+    }
+  </script>
 </body>
 </html>
