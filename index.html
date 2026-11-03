@@ -8,10 +8,11 @@
         body { font-family: sans-serif; background-color: #000; color: #fff; text-align: center; padding: 20px; }
         .container { max-width: 500px; margin: 0 auto; border: 1px solid #333; padding: 20px; border-radius: 15px; }
         .upload-section { margin: 20px 0; border: 2px dashed #4a90e2; padding: 30px; border-radius: 10px; cursor: pointer; }
-        .btn { background-color: #4a90e2; color: #fff; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
-        .hidden { display: none; }
+        .btn { background-color: #4a90e2; color: #fff; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; display: inline-block; text-decoration: none; box-sizing: border-box; }
+        .hidden { display: none !important; }
+        input[type="file"] { display: none; }
     </style>
-    <!-- Load FFmpeg.wasm -->
+    <!-- Load FFmpeg.wasm v0.12.6 -->
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js"></script>
     <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js"></script>
 </head>
@@ -20,24 +21,25 @@
         <h1>Ronish Dada Video Compressor</h1>
         
         <!-- Normal Video Option -->
-        <div class="upload-section" onclick="document.getElementById('upload-normal').click()">
+        <div class="upload-section" id="box-normal">
             <p>Drop your normal video here</p>
             <p>or choose a file</p>
-            <button class="btn">Choose normal 4K 120fps video</button>
-            <input type="file" id="upload-normal" accept="video/*" class="hidden">
+            <button type="button" class="btn" id="btn-normal">Choose normal 4K 60fps video</button>
+            <input type="file" id="upload-normal" accept="video/*">
         </div>
         
         <!-- HDR Video Option -->
-        <div class="upload-section" onclick="document.getElementById('upload-hdr').click()">
+        <div class="upload-section" id="box-hdr">
             <p>Drop your HDR video here</p>
             <p>or choose a file</p>
-            <button class="btn">Choose HDR video</button>
-            <input type="file" id="upload-hdr" accept="video/*" class="hidden">
+            <button type="button" class="btn" id="btn-hdr">Choose HDR video</button>
+            <input type="file" id="upload-hdr" accept="video/*">
         </div>
         
         <p id="status"></p>
         <video id="player" controls class="hidden" width="100%"></video>
-        <button id="download-btn" class="btn hidden">Download Compressed Video</button>
+        <br>
+        <a id="download-btn" class="btn hidden">Download Compressed Video</a>
     </div>
 
     <script>
@@ -45,9 +47,23 @@
         const { fetchFile, toBlobURL } = FFmpegUtil;
         let ffmpeg = null;
 
+        // UI triggers without event loop bubbling
+        document.getElementById('box-normal').addEventListener('click', (e) => {
+            if (e.target.id !== 'upload-normal') document.getElementById('upload-normal').click();
+        });
+        document.getElementById('box-hdr').addEventListener('click', (e) => {
+            if (e.target.id !== 'upload-hdr') document.getElementById('upload-hdr').click();
+        });
+
         async function initFFmpeg() {
             if (ffmpeg === null) {
                 ffmpeg = new FFmpeg();
+                ffmpeg.on('log', ({ message }) => {
+                    console.log(message);
+                });
+                ffmpeg.on('progress', ({ progress }) => {
+                    document.getElementById('status').innerText = `Processing: ${Math.round(progress * 100)}%`;
+                });
                 const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
                 await ffmpeg.load({
                     coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
@@ -57,37 +73,47 @@
         }
 
         async function handleCompression(file) {
-            document.getElementById('status').innerText = "Loading FFmpeg and processing video...";
-            await initFFmpeg();
+            try {
+                document.getElementById('status').innerText = "Loading FFmpeg library...";
+                await initFFmpeg();
 
-            const inputName = file.name;
-            const outputName = 'compressed_' + file.name;
+                document.getElementById('status').innerText = "Processing video...";
+                const inputName = 'input_' + Date.now() + '.mp4';
+                const outputName = 'compressed_' + Date.now() + '.mp4';
 
-            await ffmpeg.writeFile(inputName, await fetchFile(file));
-            
-            // Compress video using H.264 codec and CRF for quality
-            await ffmpeg.exec([
-                '-i', inputName, 
-                '-c:v', 'libx264', 
-                '-crf', '22', 
-                '-preset', 'fast', 
-                '-c:a', 'aac', 
-                outputName
-            ]);
+                await ffmpeg.writeFile(inputName, await fetchFile(file));
+                
+                // Optimized fast H.264 profile for TikTok 60fps smoothing
+                await ffmpeg.exec([
+                    '-i', inputName, 
+                    '-c:v', 'libx264', 
+                    '-preset', 'ultrafast', 
+                    '-crf', '20', 
+                    '-r', '60',
+                    '-pix_fmt', 'yuv420p',
+                    '-c:a', 'aac', 
+                    '-b:a', '128k',
+                    outputName
+                ]);
 
-            const data = await ffmpeg.readFile(outputName);
-            const videoBlob = new Blob([data.buffer], { type: 'video/mp4' });
-            
-            const player = document.getElementById('player');
-            player.src = URL.createObjectURL(videoBlob);
-            player.classList.remove('hidden');
+                const data = await ffmpeg.readFile(outputName);
+                const videoBlob = new Blob([data.buffer], { type: 'video/mp4' });
+                const videoUrl = URL.createObjectURL(videoBlob);
+                
+                const player = document.getElementById('player');
+                player.src = videoUrl;
+                player.classList.remove('hidden');
 
-            const downloadBtn = document.getElementById('download-btn');
-            downloadBtn.href = player.src;
-            downloadBtn.download = outputName;
-            downloadBtn.classList.remove('hidden');
+                const downloadBtn = document.getElementById('download-btn');
+                downloadBtn.href = videoUrl;
+                downloadBtn.download = 'compressed_' + file.name;
+                downloadBtn.classList.remove('hidden');
 
-            document.getElementById('status').innerText = "Video compressed successfully!";
+                document.getElementById('status').innerText = "Video compressed successfully!";
+            } catch (err) {
+                console.error(err);
+                document.getElementById('status').innerText = "Compression Error: " + err.message;
+            }
         }
 
         document.getElementById('upload-normal').addEventListener('change', function(e) {
@@ -98,10 +124,6 @@
         document.getElementById('upload-hdr').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) handleCompression(file);
-        });
-        
-        document.getElementById('download-btn').addEventListener('click', function() {
-            this.click();
         });
     </script>
 </body>
