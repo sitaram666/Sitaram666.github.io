@@ -100,8 +100,8 @@
       actionBtn.disabled = true;
       try {
         await initFFmpeg();
-      
-        await FFmpegWASM.fetchFile(selectedFile)⁠
+      const { fetchFile } = FFmpegWASM;
+        await fetchFile(selectedFile)
         statusText.textContent = 'Optimizing video quality...';
         await ffmpeg.exec([
           '-i', 'input.mp4',
