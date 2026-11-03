@@ -1,25 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Video Compressor</title>
-<style>
-body { font-family: sans-serif; text-align: center; padding: 20px; }
-input { margin: 20px 0; }
-video { max-width: 100%; display: block; margin: 20px auto; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ronish Dada TikTok Compressor</title>
+    <style>
+        body { font-family: sans-serif; background-color: #000; color: #fff; text-align: center; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; border: 1px solid #333; padding: 20px; border-radius: 15px; }
+        .upload-section { margin: 20px 0; border: 2px dashed #4a90e2; padding: 30px; border-radius: 10px; cursor: pointer; }
+        .btn { background-color: #4a90e2; color: #fff; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
-<h1>Video Compressor</h1>
-<input type="file" id="upload" accept="video/*">
-<video id="player" controls></video>
-<script>
-document.getElementById('upload').addEventListener('change', function(e) {
-const file = e.target.files[0];
-const url = URL.createObjectURL(file);
-document.getElementById('player').src = url;
-});
-</script>
+    <div class="container">
+        <h1>Ronish Dada TikTok Compressor</h1>
+        
+        <!-- Normal Video Option -->
+        <div class="upload-section" onclick="document.getElementById('upload-normal').click()">
+            <p>Drop your normal video here</p>
+            <p>or choose a file</p>
+            <button class="btn">Choose normal video</button>
+            <input type="file" id="upload-normal" accept="video/*" class="hidden">
+        </div>
+        
+        <!-- HDR Video Option -->
+        <div class="upload-section" onclick="document.getElementById('upload-hdr').click()">
+            <p>Drop your HDR video here</p>
+            <p>or choose a file</p>
+            <button class="btn">Choose HDR video</button>
+            <input type="file" id="upload-hdr" accept="video/*" class="hidden">
+        </div>
+        
+        <p id="status"></p>
+        <video id="player" controls class="hidden" width="100%"></video>
+    </div>
+
+    <script>
+        function handleUpload(e) {
+            const file = e.target.files[0];
+            const url = URL.createObjectURL(file);
+            const player = document.getElementById('player');
+            player.src = url;
+            player.classList.remove('hidden');
+            document.getElementById('status').innerText = "Video loaded: " + file.name;
+        }
+
+        document.getElementById('upload-normal').addEventListener('change', handleUpload);
+        document.getElementById('upload-hdr').addEventListener('change', handleUpload);
+    </script>
 </body>
 </html>
