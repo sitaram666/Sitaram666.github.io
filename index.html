@@ -1,60 +1,388 @@
 <!DOCTYPE html>
-<html lang="ne">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>भिडियो अप्टाइजर</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompressBase - Mobile Optimizer</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #f59e0b;
+            --primary-hover: #d97706;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --border-color: #27272a;
+            --success-color: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        header {
+            text-align: center;
+            padding: 24px 0;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--primary-color);
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 4px;
+        }
+
+        .step-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .step-number {
+            background-color: var(--primary-color);
+            color: #000000;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .drop-zone:hover {
+            border-color: var(--primary-color);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+        }
+
+        .drop-text {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .drop-subtext {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .form-group {
+            margin-top: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--primary-color);
+            color: #000000;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #cancel-btn {
+            background-color: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            margin-top: 8px;
+        }
+
+        .progress-container {
+            margin-top: 24px;
+            display: none;
+        }
+
+        progress {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            appearance: none;
+        }
+
+        progress::-webkit-progress-bar {
+            background-color: var(--border-color);
+            border-radius: 4px;
+        }
+
+        progress::-webkit-progress-value {
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: width 0.2s;
+        }
+
+        #status-message {
+            margin-top: 12px;
+            font-size: 0.875rem;
+            text-align: center;
+            color: var(--text-muted);
+            min-height: 1.25rem;
+        }
+
+        .download-area {
+            margin-top: 24px;
+            text-align: center;
+            display: none;
+        }
+
+        .download-btn {
+            display: inline-block;
+            width: 100%;
+            padding: 16px;
+            background-color: var(--success-color);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 40px;
+            padding-bottom: 20px;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
-    <input id="source" type="file" accept="video/*" />
-    <label for="posting-device">भेरिएन्ट छान्नुहोस्:</label>
-    <select id="posting-device">
-        <option value="variant-1">Variant 1 — Experimental</option>
-        <option value="variant-2">Variant 2 — HOLY AGGRESSIVE</option>
-        <option value="variant-3">Variant 3 — Not Aggressive</option>
-    </select>
-    <button id="start">Downscale & patch</button>
-    <button id="cancel" disabled>Cancel</button>
-    <progress id="progress" max="100" value="0"></progress>
-    <p id="message" role="status"></p>
-    <a id="result" hidden>Download MP4</a>
-    <p>Powered by <a href="https://compressbase.com/">CompressBase</a></p>
+    <div class="app-container">
+        <header>
+            <div class="logo">COMPRESS<span>BASE</span></div>
+            <div class="tagline">Mobile Video Optimization</div>
+        </header>
+
+        <main>
+            <div class="step-card">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Choose your video</div>
+                </div>
+                
+                <div class="drop-zone" onclick="document.getElementById('file-input').click()">
+                    <div class="upload-icon">📁</div>
+                    <div class="drop-text" id="drop-text">Select video</div>
+                    <div class="drop-subtext">Supports high-res MP4</div>
+                </div>
+                <input type="file" id="file-input" accept="video/mp4" />
+
+                <div class="form-group">
+                    <label for="posting-device">Select Variant</label>
+                    <select id="posting-device">
+                        <option value="variant-1">Variant 1 — Experimental (Recommended)</option>
+                        <option value="variant-2">Variant 2 — HOLY AGGRESSIVE</option>
+                        <option value="variant-3">Variant 3 — Not Aggressive</option>
+                    </select>
+                </div>
+
+                <button id="start-btn" class="action-btn">Downscale & Patch</button>
+                <button id="cancel-btn" class="action-btn" disabled>Cancel</button>
+
+                <div class="progress-container" id="progress-container">
+                    <progress id="progress-bar" value="0" max="100"></progress>
+                    <div id="status-message">Initializing...</div>
+                </div>
+
+                <div class="download-area" id="download-area">
+                    <a id="download-btn" class="download-btn">Download Optimized Video</a>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by <a href="https://compressbase.com/">CompressBase</a></p>
+        </footer>
+    </div>
 
     <script type="module">
         import { downscaleVideo } from 'https://compressbase.com/method-api/downscale.mjs';
         import { patchVideo } from 'https://compressbase.com/method-api/client.mjs';
-        const $ = id => document.getElementById(id);
-        let controller, downloadUrl;
-        $('cancel').onclick = () => controller?.abort();
-        $('start').onclick = async () => {
-            const file = $('source').files[0];
-            if (!file) return;
-            const postingDevice = $('posting-device').value;
-            if (!postingDevice) { $('message').textContent = 'पहिले एउटा भेरिएन्ट छान्नुहोस्।'; return; }
-            controller = new AbortController();
-            $('start').disabled = true; $('cancel').disabled = false;
-            $('result').hidden = true; $('progress').value = 0;
-            const onStatus = text => { $('message').textContent = text; };
-            try {
-                const mp4 = await downscaleVideo(file, {
-                    signal: controller.signal, onStatus,
-                    onProgress: fraction => { $('progress').value = fraction * 95; }
-                });
-                const output = await patchVideo(mp4, {
-                    postingDevice, signal: controller.signal, onStatus
-                });
-                controller.signal.throwIfAborted();
-                if (downloadUrl) URL.revokeObjectURL(downloadUrl);
-                downloadUrl = URL.createObjectURL(output);
-                $('result').href = downloadUrl;
-                $('result').download = 'compressbase_patched.mp4';
-                $('result').hidden = false; $('progress').value = 100;
-                onStatus('डाउनलोडको लागि तयार।');
-            } catch (error) {
-                onStatus(error.message || 'प्रक्रिया रोकियो।');
-            } finally {
-                $('start').disabled = false; $('cancel').disabled = true;
+
+        const fileInput = document.getElementById('file-input');
+        const dropText = document.getElementById('drop-text');
+        const startBtn = document.getElementById('start-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const statusMessage = document.getElementById('status-message');
+        const downloadArea = document.getElementById('download-area');
+        const downloadBtn = document.getElementById('download-btn');
+
+        let selectedFile = null;
+        let controller = null;
+        let outputUrl = null;
+
+        fileInput.onchange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                dropText.textContent = file.name;
             }
         };
-    </script>
-</body>
+
+        const setStatus = (msg) => {
+            statusMessage.textContent = msg;
+        };
+
+        cancelBtn.onclick = () => {
+            if (controller) {
+                controller.abort();
+            }
+        };
+
+        startBtn.onclick = async () => {
+            if (!selectedFile) {
+                alert('Please select a video first.');
+                return;
+            }
+
+            const postingDevice = document.getElementById('posting-device').value;
+
+            controller = new AbortController();
+            
+            startBtn.disabled = true;
+            cancelBtn.disabled = false;
+            fileInput.disabled = true;
+            downloadArea.style.display = 'none';
+            progressContainer.style.display = 'block';
+            progressBar.value = 0;
+
+            setStatus('Preparing video...');
+
+            try {
+                const mp4 = await downscaleVideo(selectedFile, {
+                    signal: controller.signal,
+                    onStatus: setStatus,
+                    onProgress: (fraction) => {
+                        progressBar.value = fraction * 95;
+                    }
+                });
+
+                setStatus('Patching metadata...');
+                const output = await patchVideo(mp4, {
+                    postingDevice,
+                    signal: controller.signal,
+                    onStatus: setStatus
+                });
+
+                controller.signal.throwIfAborted();
+
+                if (outputUrl) URL.revokeObjectURL(outputUrl);
+                outputUrl = URL.createObjectURL(output);
+
+                downloadBtn.href = outputUrl;
+                downloadBtn.download = selectedFile.name.replace(/\.mp4$/i, '') + '_optimized.mp4';
+                
+                progressContainer.style.display = 'none';
+                downloadArea.style.display = 'block';
+                setStatus('Ready.');
+
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    setStatus('Process cancelled.');
+                } else {
+                    setStatus('Error: ' + error.message);
+                }
+                progressContainer.style.display = 'none';
+            } finally {
+                startBtn.disabled = false;
+                cancelBtn.disabled = true;
+                fileInput.disabled = false;
+            }
+        };
+    </script></body>
 </html>
