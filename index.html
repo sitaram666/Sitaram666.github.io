@@ -1,312 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ne">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ROWNEES DADA - Video Quality & Compression Optimizer</title>
+  <title>Ronish Dada - Video Optimizer</title>
   <style>
-    :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --accent-color: #3b82f6;
-      --accent-hover: #2563eb;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 600px;
-      margin: auto;
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    header h1 {
-      font-size: 2.2rem;
-      font-weight: 900;
-      color: var(--text-main);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    header p {
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      margin-top: 6px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-    }
-
-    .drop-zone {
-      border: 2px dashed var(--border-color);
-      border-radius: 12px;
-      padding: 32px 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-
-    .drop-zone:hover, .drop-zone.dragover {
-      border-color: var(--accent-color);
-      background: rgba(59, 130, 246, 0.05);
-    }
-
-    .drop-zone p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-top: 8px;
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-    .controls {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    select, button {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background: #0f172a;
-      color: var(--text-main);
-      font-size: 1rem;
-      outline: none;
-    }
-
-    button {
-      background: var(--accent-color);
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s ease;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background: var(--accent-hover);
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .progress-bar {
-      width: 100%;
-      height: 8px;
-      background: var(--border-color);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 16px;
-      display: none;
-    }
-
-    .progress-fill {
-      height: 100%;
-      width: 0%;
-      background: var(--accent-color);
-      transition: width 0.3s ease;
-    }
-
-    .status-text {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: 8px;
-    }
-
-    footer {
-      margin-top: 32px;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    footer a {
-      color: var(--accent-color);
-      text-decoration: none;
-    }
+    body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; line-height: 1.5; }
+    .card { border: 1px solid #ccc; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .field { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    select, input[type="file"], button { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; }
+    button { background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; cursor: pointer; }
+    button:disabled { background-color: #aaa; cursor: not-allowed; }
+    .download-btn { display: inline-block; width: 100%; text-align: center; background-color: #28a745; color: white; padding: 12px 0; text-decoration: none; border-radius: 4px; margin-top: 15px; font-weight: bold; font-size: 16px; box-sizing: border-box; }
+    #status { font-weight: bold; margin-top: 15px; }
   </style>
-
-  <!-- CompressBase API Script -->
-  <script src="https://cdn.compressbase.io/v1/compressbase.js" async></script>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <h1>ROWNEES DADA</h1>
-      <p>High-Fidelity Mobile Video Optimizer & Compressor</p>
-    </header>
-
-    <div class="card">
-      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-        <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color: var(--accent-color)">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-        </svg>
-        <p id="fileLabel">Click or drag & drop video file here</p>
-        <input type="file" id="fileInput" accept="video/*">
-      </div>
-
-      <div class="controls">
-        <div>
-          <span class="label">Target Resolution</span>
-          <select id="resolution">
-            <option value="1080p">1080p (Full HD - Preferred)</option>
-            <option value="720p">720p (HD - Fast Upload)</option>
-            <option value="4k">4K (Ultra HD)</option>
-          </select>
-        </div>
-
-        <div>
-          <span class="label">Optimization Profile</span>
-          <select id="preset">
-            <option value="social_bypass">Social Media Compression Bypass</option>
-            <option value="high_bitrate">Max Fidelity (Smooth 60fps)</option>
-            <option value="compact">Maximum Space Saver</option>
-          </select>
-        </div>
-
-        <button id="processBtn">Optimize Video</button>
-      </div>
-
-      <div class="progress-bar" id="progressBar">
-        <div class="progress-fill" id="progressFill"></div>
-      </div>
-      <div class="status-text" id="statusText"></div>
-    </div>
-
-    <footer>
-      Powered by <a href="https://compressbase.io" target="_blank" rel="noopener">CompressBase</a>
-    </footer>
+<div class="card">
+  <h2>Ronish Dada Video Patching Tool</h2>
+  
+  <div class="field">
+    <label for="video">Select MP4 Video:</label>
+    <input id="video" type="file" accept="video/mp4" />
   </div>
 
-  <script>
-    const fileInput = document.getElementById('fileInput');
-    const dropZone = document.getElementById('dropZone');
-    const fileLabel = document.getElementById('fileLabel');
-    const processBtn = document.getElementById('processBtn');
-    const progressBar = document.getElementById('progressBar');
-    const progressFill = document.getElementById('progressFill');
-    const statusText = document.getElementById('statusText');
+  <div class="field">
+    <label for="posting-device">Choose a variant:</label>
+    <select id="posting-device">
+      <option value="variant-1">Variant 1 — Experimental (Recommended)</option>
+      <option value="variant-2">Variant 2 — HOLY AGGRESSIVE</option>
+      <option value="variant-3">Variant 3 — Not Aggressive</option>
+    </select>
+  </div>
 
-    let selectedFile = null;
+  <button id="patch">Patch Video</button>
+  
+  <p id="status" role="status"></p>
+  
+  <!-- भिडियो अप्टिमाइज भइसकेपछि यो डाउनलोड बटन स्वतः देखिनेछ -->
+  <a id="download" class="download-btn" hidden>Download Patched Video</a>
 
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        selectedFile = e.target.files[0];
-        fileLabel.innerText = selectedFile.name;
-      }
+  <hr style="margin-top:25px;" />
+  <p>Powered by <a href="https://compressbase.com/" target="_blank">CompressBase</a></p>
+</div>
+
+<script type="module">
+import { patchVideo } from 'https://compressbase.com/method-api/client.mjs';
+
+const button = document.querySelector('#patch');
+const download = document.querySelector('#download');
+const status = document.querySelector('#status');
+let outputUrl;
+
+button.onclick = async () => {
+  const file = document.querySelector('#video').files[0];
+  if (!file) {
+    status.textContent = 'कृपया पहिला भिडियो फाइल रोज्नुहोस्।';
+    return;
+  }
+  const postingDevice = document.querySelector('#posting-device').value;
+  if (!postingDevice) { 
+    status.textContent = 'Choose a variant first.'; 
+    return; 
+  }
+
+  button.disabled = true;
+  download.hidden = true;
+  status.textContent = 'Patching metadata…';
+
+  try {
+    const output = await patchVideo(file, {
+      postingDevice,
+      signal: AbortSignal.timeout(180000),
+      onStatus: message => { status.textContent = message; }
     });
 
-    dropZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropZone.classList.add('dragover');
-    });
+    if (outputUrl) URL.revokeObjectURL(outputUrl);
+    outputUrl = URL.createObjectURL(output);
+    download.href = outputUrl;
+    download.download = file.name.replace(/\.mp4$/i, '') + '_patched.mp4';
+    download.hidden = false;
+    status.textContent = 'Ready! Your video is optimized.';
+  } catch (error) {
+    status.textContent = error.message || 'त्रुटि भयो।';
+  } finally { 
+    button.disabled = false; 
+  }
+};
+</script>
 
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-
-    dropZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropZone.classList.remove('dragover');
-      if (e.dataTransfer.files.length > 0) {
-        selectedFile = e.dataTransfer.files[0];
-        fileInput.files = e.dataTransfer.files;
-        fileLabel.innerText = selectedFile.name;
-      }
-    });
-
-    processBtn.addEventListener('click', async () => {
-      if (!selectedFile) {
-        alert("Please select a video file first.");
-        return;
-      }
-
-      processBtn.disabled = true;
-      progressBar.style.display = 'block';
-      statusText.innerText = "Initializing CompressBase engine...";
-
-      try {
-        if (window.CompressBase) {
-          const client = new CompressBase.Client({
-            branding: "ROWNEES DADA"
-          });
-
-          statusText.innerText = "Processing video metadata & patch...";
-          const result = await client.compress(selectedFile, {
-            resolution: document.getElementById('resolution').value,
-            preset: document.getElementById('preset').value,
-            onProgress: (percent) => {
-              progressFill.style.width = percent + "%";
-              statusText.innerText = `Optimizing... ${Math.round(percent)}%`;
-            }
-          });
-
-          statusText.innerText = "Optimization complete!";
-          window.location.href = result.downloadUrl;
-        } else {
-          let progress = 0;
-          const interval = setInterval(() => {
-            progress += 10;
-            progressFill.style.width = progress + "%";
-            statusText.innerText = `Processing with CompressBase... ${progress}%`;
-
-            if (progress >= 100) {
-              clearInterval(interval);
-              statusText.innerText = "Process completed!";
-              processBtn.disabled = false;
-            }
-          }, 300);
-        }
-      } catch (err) {
-        console.error(err);
-        statusText.innerText = "Error during video processing.";
-        processBtn.disabled = false;
-      }
-    });
-  </script>
 </body>
 </html>
